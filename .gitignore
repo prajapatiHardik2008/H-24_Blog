@@ -1,0 +1,14 @@
+# Virtual Environment
+venv/
+env/
+.env
+
+# Python Compiled Files
+__pycache__/
+*.pyc
+
+# Flask
+instance/
+.pytest_cache/
+.vscode/
+.idea/

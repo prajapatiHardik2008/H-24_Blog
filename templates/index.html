@@ -1,11 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    HOME PAGE 
-</body>
-</html>
+
+{% extends "layout.html" %}
+{%block content%}
+    {% for post in posts%}
+    <hr>
+        <center><h1>{{ post.title }} </h1></center>
+    <hr>
+    <h3>Author Name : {{ post.Author_Name }} </h3>
+
+    <br>
+    <h3>Content</h3>
+    <p>{{ post.content }}</p>
+    <h4>Date of Post ::- {{post.date_post}} </h4>
+
+    {%endfor %}
+{%endblock content%}

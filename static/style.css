@@ -1,0 +1,17 @@
+body{
+    background:#f8f9fa;
+}
+
+.card{
+    border-radius:12px;
+}
+
+.card-header{
+    font-weight:bold;
+}
+
+.list-group-item:hover{
+    background:#007bff;
+    color:white;
+    transition:0.3s;
+}

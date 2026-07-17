@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-10 col-lg-8">
+
+            <div class="card shadow-lg border-0 rounded-lg">
+
+                <div class="card-body p-5">
+
+                    <div class="text-center mb-4">
+                        <h2 class="font-weight-bold">Create Account</h2>
+                        <p class="text-muted">
+                            Join the H-24 Community 🚀
+                        </p>
+                    </div>
+
+                    <form method="POST">
+
+                        {{ form.hidden_tag() }}
+
+                        <div class="form-group">
+                            {{ form.username.label(class="font-weight-bold") }}
+                            {{ form.username(class="form-control rounded-pill", placeholder="Enter username") }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.email.label(class="font-weight-bold") }}
+                            {{ form.email(class="form-control rounded-pill", placeholder="Enter email") }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.password.label(class="font-weight-bold") }}
+                            {{ form.password(class="form-control rounded-pill", placeholder="Password") }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.Confirm_password.label(class="font-weight-bold") }}
+                            {{ form.Confirm_password(class="form-control rounded-pill", placeholder="Confirm Password") }}
+                        </div>
+
+                        {{ form.submit(class="btn btn-primary btn-block rounded-pill") }}
+
+                    </form>
+
+                    <hr>
+
+                    <div class="text-center">
+
+                        <small class="text-muted">
+                            Already have an account?
+                        </small>
+
+                        <br>
+
+                        <a href="/login">
+                            Login Here
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

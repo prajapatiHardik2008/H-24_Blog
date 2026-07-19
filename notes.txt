@@ -1,0 +1,12 @@
+project/
+│
+├── app/
+│   ├── __init__.py
+│   ├── routes.py
+│   ├── forms.py
+│   ├── templates/
+│   └── static/
+│
+├── config.py
+├── run.py
+└── .env

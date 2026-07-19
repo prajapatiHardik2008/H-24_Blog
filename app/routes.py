@@ -1,11 +1,9 @@
-from flask import Flask , render_template ,url_for , flash ,redirect
-import os 
-import dotenv
-from forms import registration , LoginForm
-dotenv.load_dotenv()
-app = Flask(__name__)
+from app import app
+from flask import render_template , flash , url_for , redirect
+from app.forms import registration, LoginForm
 
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+#---------------------------------------------
+#this is a dummy data for testing 
 post = [
     {
         'Author_Name' : "Hardik ",
@@ -45,10 +43,6 @@ def register():
         flash(f"Account created for {form.username.data}","success")
         return redirect(url_for("home"))
     else:
-        print(form.errors)   # 👈 Ye add karo
+        flash("Something went wrong while creating your account.", "danger")
 
     return render_template("register.html",title = "Registration",form = form)
-
-if __name__ == "__main__":
-    port = os.getenv("port")
-    app.run(debug=True,port=port,host='0.0.0.0')

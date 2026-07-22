@@ -2,6 +2,8 @@ from flask import Flask
 import os
 import dotenv
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
 #from sqlalchemy.orm import DeclarativeBase
 dotenv.load_dotenv()
 
@@ -17,6 +19,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
-
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
 from app import models
 from app import routes

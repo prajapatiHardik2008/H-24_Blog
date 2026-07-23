@@ -1,10 +1,10 @@
 from app import app , db , bcrypt
 from flask import render_template , flash , url_for , redirect
-from app.forms import registration, LoginForm
+from app.forms import registration, LoginForm , UpdateProfile
 from app.models import  User ,Post
 from flask import request
-from flask_login import login_user , current_user , logout_user
-
+from flask_login import login_user , current_user , logout_user , login_required
+import random
 #---------------------------------------------
 #this is a dummy data for testing 
 post = [
@@ -22,6 +22,8 @@ post = [
     }
 ]
 
+# my fav cat's images
+profile = ['draw_cat.png','toper_cat.png','smart_cat.png','dog.png','cat_default.png']
 
 @app.route("/")
 def home():
@@ -74,7 +76,54 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('home'))
-
-@app.route('/account')
+@app.route('/account', methods=['GET', 'POST'])
+@login_required
 def account():
-    return render_template("account.html",title = "Profile | My Account")
+    form = UpdateProfile()
+
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+
+        db.session.commit()
+        flash("Profile Updated Successfully!", "success")
+        return redirect(url_for("account"))
+
+    elif request.method == "GET":
+        form.username.data = current_user.username
+        
+
+    if current_user.image_file == "default.png":
+        image = url_for(
+            "static",
+            filename=f"profile_pics/{random.choice(profile)}"
+        )
+    else:
+        image = url_for(
+            "static",
+            filename=f"profile_pics/{current_user.image_file}"
+        )
+
+    return render_template(
+        "account.html",
+        title="Profile | My Account",
+        profile=image,
+        form=form,
+        type = current_user.profile_type
+    )
+@app.context_processor
+def inject_profile():
+    if current_user.is_authenticated:
+        if current_user.image_file == "default.png":
+            image = url_for(
+                'static',
+                filename=f'profile_pics/{random.choice(profile)}'
+            )
+        else:
+            image = url_for(
+                'static',
+                filename=f'profile_pics/{current_user.image_file}'
+            )
+    else:
+        image = url_for('static', filename='profile_pics/default.png')
+
+    return dict(profile_image=image)

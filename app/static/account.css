@@ -1,0 +1,312 @@
+/* Account page — single clean theme, role only changes the badge color */
+
+.acc-page {
+  --accent: #0f766e;
+  --accent-2: #14b8a6;
+  --bg-1: #eafaf6;
+  --bg-2: #dcf4ee;
+  --text-strong: #12312c;
+  --text-muted: #5c6f6a;
+  --card-bg: rgba(255, 255, 255, 0.75);
+  --card-border: rgba(15, 118, 110, 0.15);
+  --shadow-color: rgba(15, 118, 110, 0.18);
+
+  min-height: 100vh;
+  padding: 48px 0 80px;
+  background: radial-gradient(circle at 15% 10%, var(--bg-2), transparent 55%),
+              radial-gradient(circle at 85% 90%, var(--bg-1), transparent 55%),
+              #fbfdfc;
+  color: var(--text-strong);
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+.acc-container {
+  max-width: 900px;
+}
+
+/* Badge colors per role tier (background/layout stays the same for everyone) */
+
+.badge-special { background: linear-gradient(135deg, #b45309, #f59e0b); color: #ffffff; }
+.badge-admin   { background: linear-gradient(135deg, #9f1239, #e11d48); color: #ffffff; }
+.badge-editor  { background: linear-gradient(135deg, #0369a1, #38bdf8); color: #ffffff; }
+.badge-verified{ background: linear-gradient(135deg, #4338ca, #818cf8); color: #ffffff; }
+.badge-normal  { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #ffffff; }
+
+/* Glass card base */
+
+.glass-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px -12px var(--shadow-color);
+  padding: 24px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px -14px var(--shadow-color);
+  border-color: var(--accent);
+}
+
+/* Hero section */
+
+.acc-hero {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 28px;
+  box-shadow: 0 20px 50px -20px var(--shadow-color);
+  padding: 40px;
+  margin-bottom: 32px;
+  overflow: hidden;
+}
+
+.acc-hero-inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar-ring {
+  padding: 5px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 24px 2px var(--shadow-color);
+}
+
+.avatar-img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 3px solid var(--card-bg);
+}
+
+.role-badge {
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 16px -6px var(--shadow-color);
+  white-space: nowrap;
+}
+
+.hero-info {
+  flex: 1;
+  min-width: 220px;
+}
+
+.hero-username {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: var(--text-strong);
+}
+
+.hero-email {
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.meta-chip {
+  display: flex;
+  flex-direction: column;
+  background: rgba(15, 118, 110, 0.06);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 8px 16px;
+  min-width: 140px;
+}
+
+.meta-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.meta-value {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.status-active::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  margin-right: 6px;
+  box-shadow: 0 0 8px 1px #22c55e;
+}
+
+.btn-edit-profile {
+  border: none;
+  padding: 11px 26px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 10px 24px -10px var(--shadow-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-edit-profile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px -10px var(--shadow-color);
+}
+
+/* Free member section */
+
+.role-section {
+  margin-top: 32px;
+}
+
+.info-card h4 {
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-strong);
+}
+
+.info-card p {
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.premium-upsell {
+  text-align: center;
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.premium-upsell h3 {
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.premium-upsell p {
+  color: var(--text-muted);
+  max-width: 560px;
+}
+
+.btn-premium {
+  display: inline-block;
+  border: none;
+  text-decoration: none;
+  padding: 12px 28px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 12px 26px -10px var(--shadow-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: fit-content;
+}
+
+.btn-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 32px -10px var(--shadow-color);
+  color: #fff;
+}
+
+/* Modal */
+
+.acc-modal-content {
+  border-radius: 22px;
+  border: 1px solid var(--card-border);
+  background: #ffffff;
+  color: var(--text-strong);
+}
+
+.acc-modal-header {
+  border-bottom: 1px solid var(--card-border);
+}
+
+.acc-modal-footer {
+  border-top: 1px solid var(--card-border);
+}
+
+.acc-input {
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  background: rgba(15, 118, 110, 0.04);
+  color: var(--text-strong);
+}
+
+.acc-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--shadow-color);
+}
+
+/* Responsive */
+
+@media (max-width: 991.98px) {
+  .acc-hero-inner {
+    gap: 24px;
+  }
+  .hero-username {
+    font-size: 1.7rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .acc-page {
+    padding: 28px 0 60px;
+  }
+  .acc-hero {
+    padding: 28px 20px;
+    text-align: center;
+  }
+  .acc-hero-inner {
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero-meta {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .avatar-img {
+    width: 90px;
+    height: 90px;
+  }
+  .hero-username {
+    font-size: 1.4rem;
+  }
+  .btn-edit-profile,
+  .btn-premium {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-card,
+  .btn-edit-profile,
+  .btn-premium {
+    transition: none !important;
+  }
+}

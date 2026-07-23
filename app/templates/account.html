@@ -1,5 +1,173 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>My Account</h1>
+<link rel="stylesheet" href="{{ url_for('static', filename='account.css') }}">
+
+{% if type == "special" %}
+    {% set role_class = "role-special" %}
+    {% set role_label = "Special Creator" %}
+{% elif type == "admin" %}
+    {% set role_class = "role-admin" %}
+    {% set role_label = "Administrator" %}
+{% elif type == "editor" %}
+    {% set role_class = "role-editor" %}
+    {% set role_label = "Editor" %}
+{% elif type == "verified" %}
+    {% set role_class = "role-verified" %}
+    {% set role_label = "Verified Member" %}
+{% else %}
+    {% set role_class = "role-normal" %}
+    {% set role_label = "Free Member" %}
+{% endif %}
+
+<div class="acc-page {{ role_class }}" data-role="{{ type }}">
+  <div class="container acc-container">
+
+    <!-- Hero / profile header -->
+    <div class="acc-hero">
+      <div class="acc-hero-inner">
+        <div class="avatar-wrap">
+          <div class="avatar-ring">
+            <img src="{{ profile }}" alt="Profile picture" class="avatar-img">
+          </div>
+          {% if type == "special" %}
+            <span class="role-badge badge-special">⭐ Special Creator</span>
+          {% elif type == "admin" %}
+            <span class="role-badge badge-admin">👑 Administrator</span>
+          {% elif type == "editor" %}
+            <span class="role-badge badge-editor">📝 Editor</span>
+          {% elif type == "verified" %}
+            <span class="role-badge badge-verified">✔ Verified</span>
+          {% else %}
+            <span class="role-badge badge-normal">Member</span>
+          {% endif %}
+        </div>
+
+        <div class="hero-info">
+          <h1 class="hero-username">{{ current_user.username }}</h1>
+          <p class="hero-email">{{ current_user.email }}</p>
+
+          <div class="hero-meta">
+            <div class="meta-chip">
+              <span class="meta-label">Account Type</span>
+              <span class="meta-value">{{ role_label }}</span>
+            </div>
+            <div class="meta-chip">
+              <span class="meta-label">Member Since</span>
+              <span class="meta-value">
+                ---
+              </span>
+            </div>
+            <div class="meta-chip">
+              <span class="meta-label">Status</span>
+              <span class="meta-value status-active">Active</span>
+            </div>
+          </div>
+
+          <button type="button" class="btn-edit-profile" data-toggle="modal" data-target="#updateProfileModal">
+            Edit Profile
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Free / normal members get a bit of guidance plus the premium upsell -->
+    {% if type == "normal" %}
+    <div class="row g-4 role-section">
+      <div class="col-md-6">
+        <div class="glass-card info-card">
+          <h4>Welcome aboard 👋</h4>
+          <p>You're on the Free plan. Fill out your profile and explore the community to get the most out of your account.</p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="glass-card info-card">
+          <h4>Level up</h4>
+          <p>Active members, contributors, and researchers can request a Premium Profile with extra badges and perks.</p>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="glass-card premium-upsell">
+          <h3>Want a Premium Profile?</h3>
+          <p>
+            Premium profiles are available for developers, creators, ethical hackers,
+            security researchers, open-source contributors, and active community members.
+          </p>
+          <a class="btn-premium"
+             href="mailto:yourmail@example.com?subject=Premium%20Profile%20Request&body=Hello%2C%0A%0AI%20would%20like%20to%20request%20a%20Premium%20Profile.%0A%0AName%3A%0AUsername%3A%0A%0AReason%3A%0A%0AGitHub%3A%0APortfolio%3A%0A%0AThank%20you.">
+            Request Premium Profile
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<!-- Edit profile modal -->
+<div class="modal fade" id="updateProfileModal" tabindex="-1" aria-labelledby="updateProfileLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content acc-modal-content">
+      <div class="modal-header acc-modal-header">
+        <h5 class="modal-title" id="updateProfileLabel">
+          <i class="fas fa-user-edit me-2"></i> Update Profile
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="modal-body acc-modal-body">
+          
+          <!-- Username Field -->
+          <div class="form-group mb-3">
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control acc-input", placeholder="Enter your username") }}
+          </div>
+          <!-- User profile pic  -->
+           <div class="form-group mb-3">
+            {{ form.profile_pic.label(class="form-label") }}
+            {{ form.profile_pic(class="form-control acc-input", placeholder="Enter your username") }}
+          </div>
+          <!-- Bio / About Me Field (Realistic & Useful) -->
+          <div class="form-group mb-3">
+            {{ form.bio.label(class="form-label") if form.bio else '<label class="form-label">Bio / About Me</label>'|safe }}
+            {% if form.bio %}
+              {{ form.bio(class="form-control acc-input", rows="3", placeholder="Tell a little bit about yourself or your tech stack...") }}
+            {% else %}
+              <textarea class="form-control acc-input" name="bio" rows="3" placeholder="Tell a little bit about yourself or your tech stack..."></textarea>
+            {% endif %}
+          </div>
+
+          <!-- GitHub / Portfolio Link Field (Real value for developers) -->
+          <div class="form-group mb-3">
+            {{ form.github_link.label(class="form-label") if form.github_link else '<label class="form-label">GitHub Profile</label>'|safe }}
+            {% if form.github_link %}
+              {{ form.github_link(class="form-control acc-input", placeholder="https://github.com/yourusername") }}
+            {% else %}
+              <input type="url" class="form-control acc-input" name="github_link" placeholder="https://github.com/yourusername">
+            {% endif %}
+          </div>
+
+        </div>
+        <div class="modal-footer acc-modal-footer">
+          <div class="form-group">
+             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            {{ form.submit(class="btn btn-primary ") }}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>  
+{% if form.errors %}
+<script>
+  $(document).ready(function () {
+    $('#updateProfileModal').modal('show');
+  });
+</script>
+{% endif %}
 
 {% endblock content %}

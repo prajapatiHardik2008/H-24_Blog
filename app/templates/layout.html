@@ -112,7 +112,7 @@ href="{{ url_for('static', filename='style.css') }}">
     </form>
         {% if current_user.is_authenticated %}
             <a href="{{ url_for('account') }}" class="btn btn-outline-primary p-1 mr-2">
-                <img src="{{ profile }}"
+                <img src="{{ profile_image  }}"
                      alt="Profile"
                      width="28"
                      height="28"

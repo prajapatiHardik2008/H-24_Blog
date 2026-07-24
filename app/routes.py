@@ -133,12 +133,16 @@ def inject_profile():
     if current_user.is_authenticated:
         if current_user.image_file == "default.png":
             image = url_for(
-                'static',
-                filename=f'profile_pics/{random.choice(profile)}'
+                "static",
+                filename=f"profile_pics/{random.choice(profile)}"
             )
         else:
             image = current_user.image_file
+
     else:
-        image = url_for('static', filename='profile_pics/default.png')
+        image = url_for(
+            "static",
+            filename="profile_pics/default.png"
+        )
 
     return dict(profile_image=image)

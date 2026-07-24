@@ -5,6 +5,9 @@ from app.models import  User ,Post
 from flask import request
 from flask_login import login_user , current_user , logout_user , login_required
 import random
+import secrets
+import os
+import cloudinary.uploader
 #---------------------------------------------
 #this is a dummy data for testing 
 post = [
@@ -76,6 +79,19 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+def save_img(form_img):
+    if current_user.public_id:
+        cloudinary.uploader.destroy(current_user.public_id)
+    random_hex = secrets.token_hex(8)
+    response = cloudinary.uploader.upload(
+        form_img,
+        public_id = random_hex,
+        asset_folder = "profile_pics",
+        overwrite = True
+    ) 
+    
+    return response
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
@@ -83,7 +99,12 @@ def account():
 
     if form.validate_on_submit():
         current_user.username = form.username.data
-
+        current_user.bio = form.bio.data
+        current_user.github_link  = form.github_link.data
+        if form.profile_pic.data:
+            response =  save_img(form_img=form.profile_pic.data)   
+            current_user.public_id = response["public_id"]
+            current_user.image_file = response["secure_url"]
         db.session.commit()
         flash("Profile Updated Successfully!", "success")
         return redirect(url_for("account"))
@@ -98,10 +119,7 @@ def account():
             filename=f"profile_pics/{random.choice(profile)}"
         )
     else:
-        image = url_for(
-            "static",
-            filename=f"profile_pics/{current_user.image_file}"
-        )
+        image = current_user.image_file
 
     return render_template(
         "account.html",
@@ -119,10 +137,7 @@ def inject_profile():
                 filename=f'profile_pics/{random.choice(profile)}'
             )
         else:
-            image = url_for(
-                'static',
-                filename=f'profile_pics/{current_user.image_file}'
-            )
+            image = current_user.image_file
     else:
         image = url_for('static', filename='profile_pics/default.png')
 

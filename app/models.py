@@ -11,7 +11,8 @@ class User(db.Model,UserMixin):
     id = db.Column(db.Integer , primary_key = True)
     username = db.Column(db.String(20), unique = True , nullable = False)
     email = db.Column(db.String(80), unique = True , nullable = False)
-    image_file = db.Column(db.String(20),nullable = False , default = 'default.png' ) # for profile  
+    image_file = db.Column(db.String(500),nullable = False , default = 'default.png' ) # for profile  
+    public_id = db.Column(db.String(255),nullable = True )
     profile_type = db.Column(
     db.String(20),
     nullable=False,
@@ -19,6 +20,8 @@ class User(db.Model,UserMixin):
     )    
     password = db.Column(db.String(128))
     posts = db.relationship("Post",backref='author' , lazy = True)
+    bio = db.Column(db.Text, nullable=True)
+    github_link = db.Column(db.String(255), nullable=True)
     def __repr__(self):
         return f"User('{self.username}','{self.email}','{self.image_file}')"
     

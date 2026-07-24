@@ -45,24 +45,45 @@
         <div class="hero-info">
           <h1 class="hero-username">{{ current_user.username }}</h1>
           <p class="hero-email">{{ current_user.email }}</p>
+          
+          <!-- Conditional Bio Section -->
+          {% if current_user.bio %}
+          <div class="hero-bio mt-2 mb-2">
+            <p class="text-muted"><i class="fas fa-info-circle me-1"></i> {{ current_user.bio }}</p>
+          </div>
+          {% endif %}
 
           <div class="hero-meta">
             <div class="meta-chip">
               <span class="meta-label">Account Type</span>
               <span class="meta-value">{{ role_label }}</span>
             </div>
+            
             <div class="meta-chip">
-              <span class="meta-label">Member Since</span>
+              <span class="meta-label"></span>
               <span class="meta-value">
-                ---
+                😊
               </span>
             </div>
+
             <div class="meta-chip">
               <span class="meta-label">Status</span>
               <span class="meta-value status-active">Active</span>
             </div>
-          </div>
 
+            <!-- Conditional GitHub Chip -->
+            {% if current_user.github_link %}
+            <div class="meta-chip">
+              <span class="meta-label">GitHub</span>
+              <span class="meta-value">
+                <a href="{{ current_user.github_link }}" target="_blank" class="text-decoration-none">
+                  <i class="fab fa-github"></i> Profile
+                </a>
+              </span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
           <button type="button" class="btn-edit-profile" data-toggle="modal" data-target="#updateProfileModal">
             Edit Profile
           </button>
@@ -117,7 +138,7 @@
         </button>
       </div>
 
-      <form method="POST">
+      <form method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <div class="modal-body acc-modal-body">
           
@@ -130,6 +151,9 @@
            <div class="form-group mb-3">
             {{ form.profile_pic.label(class="form-label") }}
             {{ form.profile_pic(class="form-control acc-input", placeholder="Enter your username") }}
+            {% for error in form.profile_pic.errors %}
+                                <small class="text-danger">{{ error }}</small>
+            {% endfor %}
           </div>
           <!-- Bio / About Me Field (Realistic & Useful) -->
           <div class="form-group mb-3">

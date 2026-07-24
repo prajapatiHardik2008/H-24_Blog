@@ -45,8 +45,11 @@ class LoginForm(FlaskForm):
 
 class UpdateProfile(FlaskForm):   # it is inher. Flask form 
     username = StringField("Username",validators=[DataRequired(),Length(min=2,max=10) ]) # data is requried and min length is 2 or max len os 10 
+    profile_pic = FileField("Upload your Profile Pic ",validators=[FileAllowed(['png','jpeg','jpg'], 'Only JPG, JPEG, and PNG files are allowed.')])
+    
+    bio = StringField("Bio",validators=[Length(min=0,max=50) ])
+    github_link = StringField("GitHub Profile ",validators=[Length(min=0,max=50) ])
     submit = SubmitField("Save Profile")
-    profile_pic = FileField("Upload your Profile Pic ",validators=[FileAllowed(['png','jpeg','jpg'])])
     def validate_username(self,username):
         if username.data != current_user.username:
             user = User.query.filter_by(username=username.data).first()

@@ -2,34 +2,277 @@
 
 {% block content %}
 
+<style>
+
+.post-card{
+    border:0;
+    border-radius:18px;
+    transition:.25s;
+}
+
+.post-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 .5rem 1rem rgba(0,0,0,.12)!important;
+}
+
+.author-img{
+    width:52px;
+    height:52px;
+    object-fit:cover;
+    border-radius:50%;
+    border:2px solid #dee2e6;
+}
+
+/* Username */
+
+.author-name{
+    font-weight:700;
+    font-size:1rem;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+/* Role Badge */
+
+.role-badge{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    min-width:28px;
+    height:28px;
+
+    padding:0 10px;
+
+    border-radius:50px;
+
+    font-size:.75rem;
+    font-weight:600;
+
+    transition:.25s;
+
+    cursor:default;
+
+    user-select:none;
+
+}
+
+.role-badge:hover{
+
+    transform:translateY(-2px) scale(1.06);
+
+}
+
+/* Special */
+
+.role-special{
+
+    background:linear-gradient(135deg,#FFD54F,#FFB300);
+    color:#4d3600;
+
+    box-shadow:
+    0 0 10px rgba(255,193,7,.35);
+
+}
+
+/* Editor */
+
+.role-editor{
+
+    background:#0d6efd;
+    color:#fff;
+
+}
+
+/* Verified */
+
+.role-verified{
+
+    background:#198754;
+    color:#fff;
+
+}
+
+/* Title */
+
+.post-title{
+
+    font-weight:700;
+    margin-bottom:15px;
+
+}
+
+/* Content */
+
+.post-content{
+
+    overflow:hidden;
+    transition:.35s;
+
+}
+
+.post-content.collapsed{
+
+    display:-webkit-box;
+    -webkit-line-clamp:5;
+    -webkit-box-orient:vertical;
+
+}
+
+/* Read More */
+
+.toggle-btn{
+
+    padding:0;
+    margin-top:15px;
+
+    font-weight:600;
+
+    text-decoration:none;
+
+}
+
+.toggle-btn:hover{
+
+    text-decoration:underline;
+
+}
+
+</style>
+
 {% for post in posts %}
 
-<div class="card mb-4 shadow-sm">
+<div class="card shadow-sm mb-4 post-card">
 
     <div class="card-body">
 
-        <h2>{{ post.title }}</h2>
+        <!-- Header -->
 
-        <small class="text-muted">
-            By {{ post.Author_Name }}
-            |
-            {{ post.date_post }}
-        </small>
+        <div class="d-flex align-items-center mb-3">
 
-        <hr>
+            <img
+                src="{{ post.author.image_file }}"
+                class="author-img me-3"
+                alt="Profile"
+            >
 
-        <p>
-            {{ post.content }}
-        </p>
+            <div class="flex-grow-1">
 
-        <a href="#" class="btn btn-primary">
-            Read More
-        </a>
+                <div class="author-name">
+
+                    {{ post.author.username }}
+
+                    {% if post.author.profile_type == "special" %}
+
+                        <span
+                            class="role-badge role-special"
+                            title="Special Creator"
+                        >
+                            Admin | Hardik 💞
+                        </span>
+
+                    {% elif post.author.profile_type == "editor" %}
+
+                        <span
+                            class="role-badge role-editor"
+                            title="Editor"
+                        >
+                            Editor
+                        </span>
+
+                    {% elif post.author.profile_type == "verified" %}
+
+                        <span
+                            class="role-badge role-verified"
+                            title="Verified"
+                        >
+                            ✔
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+                <small class="text-muted">
+
+                    {{ post.date_posted.strftime('%d %b %Y • %I:%M %p') }}
+
+                </small>
+
+            </div>
+
+        </div>
+
+        <!-- Title -->
+
+        <h3 class="post-title">
+
+            {{ post.title }}
+
+        </h3>
+
+        <!-- Content -->
+
+        <div
+            id="content-{{ post.id }}"
+            class="post-content collapsed"
+        >
+
+            {{ post.content | safe }}
+
+        </div>
+
+        <button
+            class="btn btn-link toggle-btn"
+            onclick="togglePost({{ post.id }}, this)"
+        >
+
+            Read More ↓
+
+        </button>
 
     </div>
 
 </div>
 
 {% endfor %}
+
+<script>
+
+function togglePost(id, button){
+
+    const post=document.getElementById("content-"+id);
+
+    if(post.classList.contains("collapsed")){
+
+        post.classList.remove("collapsed");
+
+        button.innerHTML="Show Less ↑";
+
+    }else{
+
+        post.classList.add("collapsed");
+
+        button.innerHTML="Read More ↓";
+
+    }
+
+}
+
+document.querySelectorAll(".post-content").forEach(function(post){
+
+    const button=post.nextElementSibling;
+
+    if(post.scrollHeight<=post.clientHeight+5){
+
+        button.style.display="none";
+
+    }
+
+});
+
+</script>
 
 {% endblock %}

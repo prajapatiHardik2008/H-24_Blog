@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms  import StringField , PasswordField , SubmitField , BooleanField , FileField 
+from wtforms  import StringField , PasswordField , SubmitField , BooleanField , FileField  , TextAreaField , HiddenField
 from wtforms.validators import DataRequired , Length , Email , EqualTo , ValidationError 
 from app.models import User
 from flask_wtf.file import FileAllowed 
@@ -56,3 +56,7 @@ class UpdateProfile(FlaskForm):   # it is inher. Flask form
             if user :
                 raise ValidationError(" Username is already taken. ")
             
+class createPost(FlaskForm):
+    title = StringField("Title",validators=[DataRequired(),Length(min=2,max=80) ])
+    content =  HiddenField("POST CONTENT",validators=[DataRequired()])
+    submit = SubmitField("POST")

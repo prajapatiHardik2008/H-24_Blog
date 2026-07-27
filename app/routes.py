@@ -1,6 +1,6 @@
-from app import app , db , bcrypt
+from app import app , db , bcrypt , cache
 from flask import render_template , flash , url_for , redirect
-from app.forms import registration, LoginForm , UpdateProfile
+from app.forms import registration, LoginForm , UpdateProfile , createPost
 from app.models import  User ,Post
 from flask import request
 from flask_login import login_user , current_user , logout_user , login_required
@@ -8,29 +8,46 @@ import random
 import secrets
 import os
 import cloudinary.uploader
+from app.utils import refresh_home_cache , UserPostCaching
+import logging
+
 #---------------------------------------------
-#this is a dummy data for testing 
-post = [
-    {
-        'Author_Name' : "Hardik ",
-        "title" : "H-24 ",
-        "content" : "this is my cyber security tool web site ",
-        "date_post": "10/7/2026"
-    },
-    {
-        'Author_Name' : "Devang ",
-        "title" : "My portfolio ",
-        "content" : "this is my  web site ",
-        "date_post": "9/7/2026"
-    }
-]
+
+
+logging.getLogger("werkzeug").disabled = True
+
 
 # my fav cat's images
 profile = ['draw_cat.png','toper_cat.png','smart_cat.png','dog.png','cat_default.png']
 
+
+@app.after_request
+def log_request(response):
+
+    print(
+        f"[H-24] {request.remote_addr} | "
+        f"{request.method} | "
+        f"{request.path} | "
+        f"{response.status_code}"
+    )
+
+    return response
+
+
+
+@app.route("/post/<int:post_id>")
+def post(post_id):
+    # Database se id ke hisab se post nikal lo, agar na mile toh 404 error dikhao
+    post = Post.query.get_or_404(post_id)
+    return render_template('post.html', title=post.title, post=post)
+
 @app.route("/")
 def home():
-    return render_template("index.html",posts = post,title = "Home page")
+    posts = cache.get("latest_posts")
+    if posts is None:
+        refresh_home_cache()
+        posts = cache.get('latest_posts')
+    return render_template("index.html",posts = posts, title = "Home page")
 
 @app.route("/about")
 def about():
@@ -120,13 +137,14 @@ def account():
         )
     else:
         image = current_user.image_file
-
+    posts = UserPostCaching(current_user)        
     return render_template(
         "account.html",
         title="Profile | My Account",
         profile=image,
         form=form,
-        type = current_user.profile_type
+        type = current_user.profile_type,
+        posts = posts
     )
 @app.context_processor
 def inject_profile():
@@ -146,3 +164,22 @@ def inject_profile():
         )
 
     return dict(profile_image=image)
+
+@app.route('/post/new',methods = ["POST","GET"])
+@login_required
+def new_post():
+    form = createPost()
+
+    if form.validate_on_submit():
+        post  = Post(
+            title = form.title.data,
+            content=form.content.data,
+            author= current_user
+        )    
+        db.session.add(post)
+        db.session.commit()
+        flash("Post Created Successfully!", "success")
+        refresh_home_cache()
+        return redirect(url_for("home"))
+
+    return render_template('new_post.html',title="POST",form=form)

@@ -1,36 +1,262 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="about-container" style="max-width: 800px; margin: auto; padding: 20px;">
-    <h1>About Me</h1>
-    <hr>
-    
-    <section class="intro">
-        <p>Hello! I'm <strong>Hardik</strong>, a BCA student at Lok Jagrutti Kendra University with a passion for cybersecurity, ethical hacking, and building secure software.</p>
-        <p>I thrive on a "learning by doing" philosophy, constantly turning theoretical concepts into practical tools. Whether it's competing in CTFs or developing custom automation scripts, I am always looking for the next technical challenge.</p>
-    </section>
 
-    <section class="skills">
-        <h3>Technical Expertise</h3>
-        <ul>
-            <li><strong>Languages:</strong> Python (Favorite), HTML, CSS, JavaScript</li>
-            <li><strong>Security:</strong> Ethical Hacking, Digital Forensics, Capture The Flag (CTF)</li>
-            <li><strong>Web Development:</strong> Flask, Responsive UI design</li>
-            <li><strong>Operations:</strong> Linux/Kali Linux proficiency, Networking (OSI, TCP/UDP)</li>
-        </ul>
-    </section>
+<div class="container py-5">
 
-    <section class="experience">
-        <h3>Key Projects & Milestones</h3>
-        <ul>
-            <li><strong>picoCTF 2026:</strong> Active participant in team "def unknown_Erorr_24".</li>
-            <li><strong>H-24 Portal:</strong> Developed a personal security dashboard and portfolio site.</li>
-            <li><strong>Nexa AI Assistant:</strong> Built a Python-based voice-controlled assistant.</li>
-        </ul>
-    </section>
+    <!-- Hero -->
+    <div class="card shadow border-0 mb-5">
+        <div class="card-body text-center p-5">
 
-    <section class="goals">
-        <h3>Looking Ahead</h3>
-        <p>My current focus is on advancing my cybersecurity skills and contributing to technical communities. In the future, I plan to leverage my development expertise to create social impact applications, specifically focusing on animal welfare and environmental protection.</p>
-    </section>
+            <h1 class="fw-bold">Hi, I'm Hardik 👋</h1>
+
+            <p class="lead text-muted">
+                BCA Student • Python Developer • Flask Developer • Android Developer
+            </p>
+
+            <p class="mt-3">
+                Passionate about building secure web applications, Android apps,
+                and continuously learning Cyber Security.
+            </p>
+
+            <a href="mailto:hardikprajapati242008@gmail.com"
+               class="btn btn-primary me-2">
+                Contact Me
+            </a>
+
+            <a href="#projects"
+               class="btn btn-outline-primary">
+                View Projects
+            </a>
+
+        </div>
+    </div>
+
+    <!-- About -->
+
+    <div class="card shadow-sm mb-5">
+        <div class="card-body">
+
+            <h2 class="mb-3">
+                About Me
+            </h2>
+
+            <p>
+                Hello! I'm <strong>Hardik</strong>, a BCA student who loves
+                creating modern web applications and Android apps.
+                My favorite programming language is Python, and I enjoy working
+                with Flask to build secure and user-friendly applications.
+            </p>
+
+            <p>
+                Besides development, I actively learn Cyber Security,
+                Ethical Hacking, Networking, and Digital Forensics through
+                practical projects and CTF challenges.
+            </p>
+
+        </div>
+    </div>
+
+    <!-- Skills -->
+
+    <div class="card shadow-sm mb-5">
+
+        <div class="card-body">
+
+            <h2 class="mb-4">
+                My Skills
+            </h2>
+
+            <span class="badge bg-primary p-2 m-1">Python</span>
+            <span class="badge bg-success p-2 m-1">Flask</span>
+            <span class="badge bg-danger p-2 m-1">Java</span>
+            <span class="badge bg-warning text-dark p-2 m-1">JavaScript</span>
+            <span class="badge bg-info text-dark p-2 m-1">HTML</span>
+            <span class="badge bg-secondary p-2 m-1">CSS</span>
+            <span class="badge bg-light p-2 m-1">Bootstrap 5</span>
+            <span class="badge bg-primary p-2 m-1">Android Development</span>
+            <span class="badge bg-success p-2 m-1">SQLAlchemy</span>
+            <span class="badge bg-danger p-2 m-1">Git</span>
+            <span class="badge bg-warning text-dark p-2 m-1">GitHub</span>
+            <span class="badge bg-info text-dark p-2 m-1">Linux</span>
+
+        </div>
+
+    </div>
+
+    <!-- Projects -->
+
+    <div id="projects" class="mb-5">
+
+        <h2 class="mb-4">
+            Featured Projects
+        </h2>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h4>
+                            H-24 Blog
+                        </h4>
+
+                        <p>
+                            A Flask-based blogging platform with authentication,
+                            user profiles, secure login, post management,
+                            and responsive design.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h4>
+                            Nexa AI
+                        </h4>
+
+                        <p>
+                            A Python voice assistant capable of automation,
+                            voice commands, and AI integration.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h4>
+                            Cyber Security Tools
+                        </h4>
+
+                        <p>
+                            Developed multiple Python-based security tools
+                            including scanners, forensic utilities,
+                            and automation scripts.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Freelance -->
+
+    <div class="card border-primary shadow mb-5">
+
+        <div class="card-body text-center">
+
+            <h2 class="text-primary">
+                💼 Freelance Services
+            </h2>
+
+            <p class="mt-3">
+                Need a website or Android application?
+                I also work on freelance projects.
+            </p>
+
+            <div class="row text-start mt-4">
+
+                <div class="col-md-6">
+
+                    <ul>
+
+                        <li>Custom Website Development</li>
+                        <li>Android App Development</li>
+                        <li>Portfolio Websites</li>
+
+                    </ul>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <ul>
+
+                        <li>Bug Fixes</li>
+                        <li>Authentication Systems</li>
+                        <li>Deployment & Maintenance</li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <a href="mailto:hardikprajapati242008@gmail.com"
+               class="btn btn-primary mt-3">
+                Hire Me
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- Contact -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-body text-center">
+
+            <h2>
+                Contact
+            </h2>
+
+            <hr>
+
+            <p>
+                📷 Instagram :
+                <strong>@prajapati__hardik__24</strong>
+            </p>
+
+            <p>
+                📧 Email :
+                <strong>hardikprajapati242008@gmail.com</strong>
+            </p>
+
+            <p>
+                💻 GitHub :
+                <strong>github.com/prajapatiHardik2008</strong>
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+
+    <div class="text-center mt-5 text-muted">
+
+        <small>
+
+            Built with ❤️ by Hardik • Open for Web & Android Freelance Projects
+
+        </small>
+
+    </div>
+
 </div>
-{% endblock content %}
+
+{% endblock %}

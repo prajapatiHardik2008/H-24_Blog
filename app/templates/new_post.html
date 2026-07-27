@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-body">
+
+            <form method="POST" id="postForm">
+
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    {{ form.title.label(class="form-label") }}
+                    {{ form.title(class="form-control") }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Content</label>
+
+                    <div id="toolbar">
+                        <span class="ql-formats">
+                            <select class="ql-header"></select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-blockquote"></button>
+                            <button class="ql-code-block"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                            <button class="ql-image"></button>
+                        </span>
+                    </div>
+
+                    <!-- Quill Editor Container -->
+                    <div id="editor" style="height:350px;"></div>
+
+                    <!-- WTForms Hidden Field -->
+                    {{ form.content(id="content") }}
+                    
+                    <!-- Error handling display for content if any -->
+                    {% for error in form.content.errors %}
+                        <div class="text-danger mt-1">{{ error }}</div>
+                    {% endfor %}
+
+                </div>
+
+                {{ form.submit(class="btn btn-primary") }}
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const quill = new Quill("#editor", {
+        theme: "snow",
+        modules: {
+            toolbar: "#toolbar"
+        }
+    });
+
+    const hiddenInput = document.getElementById("content");
+    const form = document.getElementById("postForm");
+
+    // Agar purana data hai (jaise edit page me), toh usko load karein
+    if (hiddenInput.value.trim() !== "") {
+        quill.root.innerHTML = hiddenInput.value;
+    }
+
+    // Form submit hone se theek pehle Quill ka HTML hidden input me daalo
+    form.addEventListener("submit", function (e) {
+        let htmlContent = quill.root.innerHTML;
+        
+        // Agar editor bilkul khali hai toh empty string set karein taki DataRequired pakad sake
+        if (quill.getText().trim() === "") {
+            htmlContent = "";
+        }
+        
+        hiddenInput.value = htmlContent;
+    });
+
+});
+</script>
+
+{% endblock %}

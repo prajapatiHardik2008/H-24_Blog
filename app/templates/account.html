@@ -124,7 +124,39 @@
 
   </div>
 </div>
+<!-- Post card on user profile  -->
+    <div class="user-posts-section mt-5">
+      <h3 class="mb-4" style="color: rgb(88, 200, 44);"><i class="fas fa-layer-group me-2"></i> My Posts</h3>
+      <div class="row g-4">
+        
+        {% if posts %}
+            {% for post in posts %}
+            <div class="col-md-4">
+              <div class="glass-card p-3 d-flex flex-column justify-content-between " style="height: 100%;">
 
+                <h5 class="post-title text-dark mb-3">{{ post.title }}</h5>
+                
+                
+                <div>
+                  <a href="{{ url_for('post', post_id=post.id) }}" class="btn btn-sm btn-outline-primary w-100">
+                    <i class="fas fa-edit"></i> Edit Post
+                  </a>
+                </div>
+
+              </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            
+            <div class="col-12">
+              <div class="glass-card p-4 text-center">
+                <p class="text-muted mb-0">You haven't created any posts yet. Start sharing your ideas!</p>
+              </div>
+            </div>
+        {% endif %}
+        
+      </div>
+    </div>
 <!-- Edit profile modal -->
 <div class="modal fade" id="updateProfileModal" tabindex="-1" aria-labelledby="updateProfileLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">

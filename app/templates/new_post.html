@@ -1,6 +1,63 @@
 {% extends "layout.html" %}
 {% block content %}
+<style>
+    /* Quill Editor ke andar custom font options apply karne ke liye */
+.ql-font-serif {
+    font-family: Georgia, Times New Roman, serif;
+}
+.ql-font-monospace {
+    font-family: 'Courier New', Courier, monospace;
+}
+/* Agar tu 'code' ya hacker vibe ke liye Fira Code ya JetBrains Mono use kar raha hai */
+.ql-container {
+    font-family: inherit; /* Tera VS Code dark mode font inherit kar lega */
+    font-size: 16px;
+}
+/* Quill Toolbar ko VS Code Dark Mode aur Neon Vibe dene ke liye */
+.ql-toolbar.ql-snow {
+    background-color: #1e1e1e !important;
+    border: 1px solid rgba(0, 255, 102, 0.3) !important;
+    border-radius: 6px 6px 0 0;
+}
 
+/* Toolbar ke saare icons aur text ko white/bright karna */
+.ql-toolbar.ql-snow .ql-stroke {
+    stroke: #00ff66 !important; /* Icons ki outline neon green ho jayegi */
+}
+
+.ql-toolbar.ql-snow .ql-fill {
+    fill: #00ff66 !important; /* Icons ka andar ka hissa */
+}
+
+.ql-toolbar.ql-snow .ql-picker {
+    color: #ffffff !important; /* Dropdown ka text white dikhega */
+}
+
+/* Dropdown ke andar ke options ko dark background aur white text dena */
+.ql-toolbar.ql-snow .ql-picker-options {
+    background-color: #252526 !important;
+    border: 1px solid rgba(0, 255, 102, 0.3) !important;
+    color: #ffffff !important;
+}
+
+.ql-toolbar.ql-snow .ql-picker-item {
+    color: #ffffff !important;
+}
+
+.ql-toolbar.ql-snow .ql-picker-item:hover {
+    color: #00ff66 !important;
+    background-color: #1e1e1e !important;
+}
+
+/* Editor box ka background aur text color */
+.ql-container.ql-snow {
+    background-color: #1e1e1e !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(0, 255, 102, 0.3) !important;
+    border-radius: 0 0 6px 6px;
+    font-family: inherit;
+}
+</style>
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 
 <div class="container mt-4">
@@ -20,26 +77,70 @@
                     <label class="form-label">Content</label>
 
                     <div id="toolbar">
+                        <!-- Font Family aur Size -->
+                        <span class="ql-formats">
+                            <select class="ql-font">
+                                <!-- By default Quill ke kuch standard fonts, tu chahe toh aur add kar sakta hai -->
+                                <option selected></option>
+                                <option value="serif">Serif</option>
+                                <option value="monospace">Monospace</option>
+                            </select>
+                            <select class="ql-size">
+                                <option value="small"></option>
+                                <option selected></option>
+                                <option value="large"></option>
+                                <option value="huge"></option>
+                            </select>
+                        </span>
+                    
+                        <!-- Headers -->
                         <span class="ql-formats">
                             <select class="ql-header"></select>
                         </span>
+                    
+                        <!-- Text Formatting -->
                         <span class="ql-formats">
                             <button class="ql-bold"></button>
                             <button class="ql-italic"></button>
                             <button class="ql-underline"></button>
                             <button class="ql-strike"></button>
                         </span>
+                    
+                        <!-- Colors (Text Color & Background Highlight) -->
+                        <span class="ql-formats">
+                            <select class="ql-color"></select>
+                            <select class="ql-background"></select>
+                        </span>
+                    
+                        <!-- Text Alignment -->
+                        <span class="ql-formats">
+                            <button class="ql-align" value=""></button>
+                            <button class="ql-align" value="center"></button>
+                            <button class="ql-align" value="right"></button>
+                            <button class="ql-align" value="justify"></button>
+                        </span>
+                    
+                        <!-- Quotes & Code Blocks -->
                         <span class="ql-formats">
                             <button class="ql-blockquote"></button>
                             <button class="ql-code-block"></button>
                         </span>
+                    
+                        <!-- Lists -->
                         <span class="ql-formats">
                             <button class="ql-list" value="ordered"></button>
                             <button class="ql-list" value="bullet"></button>
                         </span>
+                    
+                        <!-- Media & Links -->
                         <span class="ql-formats">
                             <button class="ql-link"></button>
                             <button class="ql-image"></button>
+                        </span>
+                    
+                        <!-- Clear Formatting -->
+                        <span class="ql-formats">
+                            <button class="ql-clean"></button>
                         </span>
                     </div>
 
@@ -63,18 +164,58 @@
         </div>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
+    
     const quill = new Quill("#editor", {
         theme: "snow",
         modules: {
-            toolbar: "#toolbar"
+            toolbar: {
+                container: "#toolbar",
+                handlers: {
+                    image: imageHandler // Custom image handler function call hoga
+                }
+            }
         }
     });
+
+    // Custom Image Handler Function
+    function imageHandler() {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = async () => {
+            const file = input.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                try {
+                    // Flask ke route par image bhej rahe hain upload hone ke liye
+                    let response = await fetch('/upload-image', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    let result = await response.json();
+
+                    if (result.success) {
+                        const range = quill.getSelection();
+                        quill.insertEmbed(range.index, 'image', result.url);
+                    } else {
+                        alert('Image upload failed: ' + result.message);
+                    }
+                } catch (err) {
+                    console.error('Error uploading image:', err);
+                    alert('Image upload error!');
+                }
+            }
+        };
+    }
 
     const hiddenInput = document.getElementById("content");
     const form = document.getElementById("postForm");
@@ -88,8 +229,7 @@ document.addEventListener("DOMContentLoaded", function () {
     form.addEventListener("submit", function (e) {
         let htmlContent = quill.root.innerHTML;
         
-        // Agar editor bilkul khali hai toh empty string set karein taki DataRequired pakad sake
-        if (quill.getText().trim() === "") {
+        if (quill.getText().trim() === "" && htmlContent.includes('<img') === false) {
             htmlContent = "";
         }
         

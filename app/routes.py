@@ -1,6 +1,6 @@
 from app import app , db , bcrypt , cache
-from flask import render_template , flash , url_for , redirect
-from app.forms import registration, LoginForm , UpdateProfile , createPost
+from flask import render_template , flash , url_for , redirect 
+from app.forms import registration, LoginForm , UpdateProfile , createPost , UpdatePost
 from app.models import  User ,Post
 from flask import request
 from flask_login import login_user , current_user , logout_user , login_required
@@ -10,7 +10,7 @@ import os
 import cloudinary.uploader
 from app.utils import refresh_home_cache , UserPostCaching
 import logging
-
+from flask import abort
 #---------------------------------------------
 
 
@@ -21,9 +21,28 @@ logging.getLogger("werkzeug").disabled = True
 profile = ['draw_cat.png','toper_cat.png','smart_cat.png','dog.png','cat_default.png']
 
 
+#---------------------------------------------------------
+# 404 - Page Not Found ke liye
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+# 500 - Internal Server Error ke liye (jaise database ya code crash hone par)
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
+#---------------------------------------------------------
+
+@app.route("/post/<int:post_id>")
+def post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('post.html', title=post.title, post=post)
+
 @app.after_request
 def log_request(response):
-
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+    print(ip)
+    
     print(
         f"[H-24] {request.remote_addr} | "
         f"{request.method} | "
@@ -33,14 +52,59 @@ def log_request(response):
 
     return response
 
-
-
-@app.route("/post/<int:post_id>")
-def post(post_id):
-    # Database se id ke hisab se post nikal lo, agar na mile toh 404 error dikhao
+@app.route("/searchuser",methods=["POST","GET"])
+def searchuser():
+    if request.method == "POST":
+        profile_username = request.form.get('userName') 
+        user = User.query.filter_by(username = profile_username).first()
+        if user:
+            posts = Post.query.filter_by(author=user)\
+                      .order_by(Post.date_posted.desc())\
+                      .all()
+            profile = user.image_file
+            if user.image_file == "default.png":
+                    profile_cat = ['draw_cat.png','toper_cat.png','smart_cat.png','dog.png','cat_default.png']
+                    image = url_for(
+                        "static",
+                        filename= f"profile_pics/{random.choice(profile_cat)}"
+                    )
+            else:
+                    image = user.image_file
+            print(image )
+            return render_template('view_profile.html',title='profile',user=user,posts=posts,type = user.profile_type,profile_img=image)
+    flash("User not found!", "danger")
+    return redirect(url_for('home'))    
+@app.route("/post/<int:post_id>/update", methods=["GET","POST"])
+@login_required
+def postUpdate(post_id):
     post = Post.query.get_or_404(post_id)
-    return render_template('post.html', title=post.title, post=post)
+    if post.author != current_user:
+            abort(403)
+        
+    form = UpdatePost()
 
+    if form.validate_on_submit():
+
+        post.title = form.title.data
+        post.content = form.content.data
+
+        db.session.commit()
+        refresh_home_cache()
+        flash("Post Updated Successfully","success")
+
+        return redirect(url_for("home", post_id=post.id))
+
+    elif request.method == "GET":
+
+        form.title.data = post.title
+        form.content.data = post.content
+
+    return render_template(
+        "new_post.html",
+        title="Update Post",
+        form=form,
+        post=post
+    )
 @app.route("/")
 def home():
     posts = cache.get("latest_posts")
@@ -66,8 +130,9 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password,form.password.data):
             login_user(user,remember=form.remember.data)
+            next_page = request.args.get('next')
             flash(f"Log in ","success")
-            return redirect(url_for('home'))
+            return redirect(next_page) if next_page else redirect(url_for('home'))
         else:
             flash("Invalid email or password.", "danger")
     # elif request.method == "POST":
@@ -109,6 +174,28 @@ def save_img(form_img):
     ) 
     
     return response
+from flask import request, jsonify
+import cloudinary.uploader
+
+@app.route('/upload-image', methods=['POST'])
+def upload_image():
+    if 'image' not in request.files:
+        return jsonify({'success': False, 'message': 'No file part'})
+    
+    file = request.files['image']
+    
+    if file.filename == '':
+        return jsonify({'success': False, 'message': 'No selected file'})
+    
+    try:
+        # Cloudinary par image upload kar rahe hain
+        upload_result = cloudinary.uploader.upload(file)
+        image_url = upload_result.get('secure_url') # Cloudinary ka permanent URL
+        
+        return jsonify({'success': True, 'url': image_url})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
+
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():

@@ -19,6 +19,7 @@
     {% set role_label = "Free Member" %}
 {% endif %}
 
+<!-- Parent wrapper jo poore page ko cover karega -->
 <div class="acc-page {{ role_class }}" data-role="{{ type }}">
   <div class="container acc-container">
 
@@ -46,7 +47,6 @@
           <h1 class="hero-username">{{ current_user.username }}</h1>
           <p class="hero-email">{{ current_user.email }}</p>
           
-          <!-- Conditional Bio Section -->
           {% if current_user.bio %}
           <div class="hero-bio mt-2 mb-2">
             <p class="text-muted"><i class="fas fa-info-circle me-1"></i> {{ current_user.bio }}</p>
@@ -61,9 +61,7 @@
             
             <div class="meta-chip">
               <span class="meta-label"></span>
-              <span class="meta-value">
-                😊
-              </span>
+              <span class="meta-value">😊</span>
             </div>
 
             <div class="meta-chip">
@@ -71,7 +69,6 @@
               <span class="meta-value status-active">Active</span>
             </div>
 
-            <!-- Conditional GitHub Chip -->
             {% if current_user.github_link %}
             <div class="meta-chip">
               <span class="meta-label">GitHub</span>
@@ -84,14 +81,14 @@
             {% endif %}
           </div>
         </div>
-          <button type="button" class="btn-edit-profile" data-toggle="modal" data-target="#updateProfileModal">
-            Edit Profile
-          </button>
-        </div>
+
+        <button type="button" class="btn-edit-profile" data-toggle="modal" data-target="#updateProfileModal">
+          Edit Profile
+        </button>
       </div>
     </div>
 
-    <!-- Free / normal members get a bit of guidance plus the premium upsell -->
+    <!-- Free / normal members section -->
     {% if type == "normal" %}
     <div class="row g-4 role-section">
       <div class="col-md-6">
@@ -109,12 +106,8 @@
       <div class="col-12">
         <div class="glass-card premium-upsell">
           <h3>Want a Premium Profile?</h3>
-          <p>
-            Premium profiles are available for developers, creators, ethical hackers,
-            security researchers, open-source contributors, and active community members.
-          </p>
-          <a class="btn-premium"
-             href="mailto:yourmail@example.com?subject=Premium%20Profile%20Request&body=Hello%2C%0A%0AI%20would%20like%20to%20request%20a%20Premium%20Profile.%0A%0AName%3A%0AUsername%3A%0A%0AReason%3A%0A%0AGitHub%3A%0APortfolio%3A%0A%0AThank%20you.">
+          <p>Premium profiles are available for developers, creators, ethical hackers, security researchers, and open-source contributors.</p>
+          <a class="btn-premium" href="mailto:yourmail@example.com?subject=Premium%20Profile%20Request">
             Request Premium Profile
           </a>
         </div>
@@ -122,41 +115,36 @@
     </div>
     {% endif %}
 
-  </div>
-</div>
-<!-- Post card on user profile  -->
+    <!-- Post card on user profile -->
     <div class="user-posts-section mt-5">
       <h3 class="mb-4" style="color: rgb(88, 200, 44);"><i class="fas fa-layer-group me-2"></i> My Posts</h3>
       <div class="row g-4">
-        
         {% if posts %}
             {% for post in posts %}
             <div class="col-md-4">
-              <div class="glass-card p-3 d-flex flex-column justify-content-between " style="height: 100%;">
-
-                <h5 class="post-title text-dark mb-3">{{ post.title }}</h5>
-                
-                
+              <div class="glass-card p-3 d-flex flex-column justify-content-between" style="height: 100%;">
+                <h5 class="post-title mb-3">{{ post.title }}</h5>
                 <div>
-                  <a href="{{ url_for('post', post_id=post.id) }}" class="btn btn-sm btn-outline-primary w-100">
+                  <a href="{{ url_for('postUpdate', post_id=post.id) }}" class="btn btn-sm btn-outline-primary w-100">
                     <i class="fas fa-edit"></i> Edit Post
                   </a>
                 </div>
-
               </div>
             </div>
             {% endfor %}
         {% else %}
-            
             <div class="col-12">
               <div class="glass-card p-4 text-center">
                 <p class="text-muted mb-0">You haven't created any posts yet. Start sharing your ideas!</p>
               </div>
             </div>
         {% endif %}
-        
       </div>
     </div>
+
+  </div> <!-- container close -->
+</div> <!-- acc-page close (Ab saara content iske andar wrap ho gaya hai) -->
+
 <!-- Edit profile modal -->
 <div class="modal fade" id="updateProfileModal" tabindex="-1" aria-labelledby="updateProfileLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -174,30 +162,28 @@
         {{ form.hidden_tag() }}
         <div class="modal-body acc-modal-body">
           
-          <!-- Username Field -->
           <div class="form-group mb-3">
             {{ form.username.label(class="form-label") }}
             {{ form.username(class="form-control acc-input", placeholder="Enter your username") }}
           </div>
-          <!-- User profile pic  -->
-           <div class="form-group mb-3">
+
+          <div class="form-group mb-3">
             {{ form.profile_pic.label(class="form-label") }}
-            {{ form.profile_pic(class="form-control acc-input", placeholder="Enter your username") }}
+            {{ form.profile_pic(class="form-control acc-input") }}
             {% for error in form.profile_pic.errors %}
-                                <small class="text-danger">{{ error }}</small>
+                <small class="text-danger">{{ error }}</small>
             {% endfor %}
           </div>
-          <!-- Bio / About Me Field (Realistic & Useful) -->
+
           <div class="form-group mb-3">
             {{ form.bio.label(class="form-label") if form.bio else '<label class="form-label">Bio / About Me</label>'|safe }}
             {% if form.bio %}
-              {{ form.bio(class="form-control acc-input", rows="3", placeholder="Tell a little bit about yourself or your tech stack...") }}
+              {{ form.bio(class="form-control acc-input", rows="3", placeholder="Tell a little bit about yourself...") }}
             {% else %}
-              <textarea class="form-control acc-input" name="bio" rows="3" placeholder="Tell a little bit about yourself or your tech stack..."></textarea>
+              <textarea class="form-control acc-input" name="bio" rows="3" placeholder="Tell a little bit about yourself..."></textarea>
             {% endif %}
           </div>
 
-          <!-- GitHub / Portfolio Link Field (Real value for developers) -->
           <div class="form-group mb-3">
             {{ form.github_link.label(class="form-label") if form.github_link else '<label class="form-label">GitHub Profile</label>'|safe }}
             {% if form.github_link %}
@@ -209,15 +195,14 @@
 
         </div>
         <div class="modal-footer acc-modal-footer">
-          <div class="form-group">
-             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            {{ form.submit(class="btn btn-primary ") }}
-          </div>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          {{ form.submit(class="btn btn-primary") }}
         </div>
       </form>
     </div>
   </div>
 </div>  
+
 {% if form.errors %}
 <script>
   $(document).ready(function () {

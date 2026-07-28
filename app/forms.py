@@ -60,3 +60,9 @@ class createPost(FlaskForm):
     title = StringField("Title",validators=[DataRequired(),Length(min=2,max=80) ])
     content =  HiddenField("POST CONTENT",validators=[DataRequired()])
     submit = SubmitField("POST")
+
+      
+class UpdatePost(FlaskForm):
+    title = StringField("Title",validators=[DataRequired(),Length(min=2,max=80) ])
+    content =  HiddenField("POST CONTENT",validators=[DataRequired()])
+    submit = SubmitField("POST")

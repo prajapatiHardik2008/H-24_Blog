@@ -11,6 +11,8 @@ import cloudinary.uploader
 from app.utils import refresh_home_cache , UserPostCaching
 import logging
 from flask import abort
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 #---------------------------------------------
 
 
@@ -21,16 +23,27 @@ logging.getLogger("werkzeug").disabled = True
 profile = ['draw_cat.png','toper_cat.png','smart_cat.png','dog.png','cat_default.png']
 
 
+limiter = Limiter(
+    get_remote_address,
+    default_limits=["3 per 5 minute"],
+    storage_uri=os.getenv('REDIS_URL'),
+    app=app
+    )
+
 #---------------------------------------------------------
-# 404 - Page Not Found ke liye
+# 404 - Page Not Found 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
 
-# 500 - Internal Server Error ke liye (jaise database ya code crash hone par)
+# 500 - Internal Server Error
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
+
+@app.errorhandler(429)
+def ratelimit_handler(e):
+    return render_template("429.html"), 429
 #---------------------------------------------------------
 
 @app.route("/post/<int:post_id>")
@@ -122,6 +135,7 @@ def contact():
     return render_template("contact.html")
 
 @app.route("/login",methods=["POST","GET"])
+@limiter.limit('3 per 5 minute')
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))

@@ -25,7 +25,7 @@ profile = ['draw_cat.png','toper_cat.png','smart_cat.png','dog.png','cat_default
 
 limiter = Limiter(
     get_remote_address,
-    default_limits=["3 per 5 minute"],
+    default_limits=[],
     storage_uri=os.getenv('REDIS_URL'),
     app=app
     )
@@ -135,7 +135,7 @@ def contact():
     return render_template("contact.html")
 
 @app.route("/login",methods=["POST","GET"])
-@limiter.limit('3 per 5 minute')
+@limiter.limit('3 per minute')
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))

@@ -2,7 +2,6 @@ from app import cache
 from.models import Post
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import joinedload
-import resend
 import os
 from itsdangerous import URLSafeTimedSerializer
 from app.extensions import mail

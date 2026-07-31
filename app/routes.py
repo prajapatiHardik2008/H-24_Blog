@@ -8,11 +8,12 @@ import random
 import secrets
 import os
 import cloudinary.uploader
-from app.utils import refresh_home_cache , UserPostCaching
+from app.utils import refresh_home_cache , UserPostCaching , sendEmail , genrate_verifactionToken , verifyToken
 import logging
 from flask import abort
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+
 #---------------------------------------------
 
 
@@ -155,22 +156,42 @@ def login():
 
     return render_template("login.html", title = "Log In " ,form = form)
 
-@app.route("/register",methods=["GET","POST"])
+@app.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-            return redirect(url_for('home'))
+        return redirect(url_for('home'))
+        
     form = registration()   
+    
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data , password = hashed_password , email = form.email.data  )
-        db.session.add(user)
-        db.session.commit()
-        flash(f"Account created for {form.username.data}","success")
-        return redirect(url_for("login"))
-    elif request.method  == "POST" :
-        flash("Something went wrong while creating your account.", "danger")
+        try:
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            user = User(username=form.username.data, password=hashed_password, email=form.email.data)
+            db.session.add(user)
+            db.session.commit()
+
+            token = genrate_verifactionToken(form.email.data)
+            token_link = url_for('verify_email', token=token, _external=True)
+
+            email_sent = sendEmail(form.email.data, tokenLink=token_link)
+            if email_sent:
+                flash("Registration successful! Please check your email to verify.", "success")
+            else:
+                flash("Account created, but failed to send verification email.", "warning")
+
+            return redirect(url_for("login"))
+            
+        except Exception as e:
+            db.session.rollback()  # Database rollback agar error aaye
+            print(f"Database/Registration Error: {e}")
+            flash(f"Error: {e}", "danger")
+            
+    elif request.method == "POST":
+        # Yeh print batayega ki WTForms ne form ko kyu reject kiya
+        print("Form Errors:", form.errors)
+        flash("Something went wrong while creating your account. Check form fields.", "danger")
  
-    return render_template("register.html",title = "Registration",form = form)
+    return render_template("register.html", title="Registration", form=form)
 
 @app.route('/logout')
 def logout():
@@ -285,3 +306,18 @@ def new_post():
         return redirect(url_for("home"))
 
     return render_template('new_post.html',title="POST",form=form)
+
+@app.route('/verify/<token>')
+def verify_email(token):
+    # Token ko verify karo aur email extract karo (15 minutes expiry)
+    email = verifyToken(token, expiration=900)
+    
+    if not email:
+        return "The confirmation link is invalid or has expired.", 400
+    
+    if current_user.is_verified:
+         return "Account already verified!"
+    current_user.is_verified = True
+    db.session.commit()
+    
+    return f"Email {email} verified successfully! You can now log in."

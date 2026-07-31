@@ -61,7 +61,11 @@
             
             <div class="meta-chip">
               <span class="meta-label"></span>
-              <span class="meta-value">😊</span>
+              <span class="meta-value">
+                {% if not current_user.is_verified %}
+                    <button class="btn-edit-profile" onclick="">Verify Email </button>
+                {%endif%}
+              </span>
             </div>
 
             <div class="meta-chip">

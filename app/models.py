@@ -13,6 +13,7 @@ class User(db.Model,UserMixin):
     email = db.Column(db.String(80), unique = True , nullable = False)
     image_file = db.Column(db.String(500),nullable = False , default = 'default.png' ) # for profile  
     public_id = db.Column(db.String(255),nullable = True )
+    is_verified = db.Column(db.Boolean, default=False, nullable=False)
     profile_type = db.Column(
     db.String(20),
     nullable=False,

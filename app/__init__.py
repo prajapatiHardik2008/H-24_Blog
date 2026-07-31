@@ -6,6 +6,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 import cloudinary
 from flask_caching import Cache
+from flask_mail import Mail
 
 #from sqlalchemy.orm import DeclarativeBase
 dotenv.load_dotenv()
@@ -50,5 +51,16 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 
 login_manager.login_view = 'login'
+
+
+#------------------------------------
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+
+mail = Mail(app)
+#------------------------------------
 from app import models
 from app import routes

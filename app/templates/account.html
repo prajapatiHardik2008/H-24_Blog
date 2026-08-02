@@ -64,6 +64,8 @@
               <span class="meta-value">
                 {% if not current_user.is_verified %}
                     <a class="btn-edit-profile" href="/sendverifaction">Verify Email</a>  
+                {%else%}
+                    Verified Email 💞
                 {%endif%}
               </span>
             </div>

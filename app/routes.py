@@ -293,7 +293,7 @@ def inject_profile():
 def new_post():
     if current_user.is_verified == False:
         flash("Verify Your Email First !",'danger')
-        return redirect(url_for('home'))
+        return redirect(url_for('account'))
     form = createPost()
 
     if form.validate_on_submit():
@@ -343,7 +343,7 @@ def sendverif():
 
     email_sent = sendEmail(current_user.email, tokenLink=token_link)
     if email_sent:
-            flash("Registration successful! Please check your email to verify.", "success")
+            flash(" Please check your email to verify.", "success")
     else:
-            flash("Account created, but failed to send verification email.", "warning")
+            flash("Email failed to send.", "warning")
     return redirect(url_for('home'))

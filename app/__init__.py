@@ -8,7 +8,9 @@ import cloudinary
 from flask_caching import Cache
 from flask_mail import Mail
 from flask_login import AnonymousUserMixin
-
+from sib_api_v3_sdk import (
+    Configuration
+)
 #from sqlalchemy.orm import DeclarativeBase
 dotenv.load_dotenv()
 
@@ -72,5 +74,12 @@ class AnonymousUser(AnonymousUserMixin):
 # Flask-Login me isko set kar do
 login_manager.anonymous_user = AnonymousUser
 #------------------------------------
+# Email api confi. for brevo 
+
+
+configuration = Configuration()
+configuration.api_key["api-key"] = os.getenv("BREVO_API")
+
+#---------------------------------
 from app import models
 from app import routes

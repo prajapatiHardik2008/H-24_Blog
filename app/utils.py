@@ -6,7 +6,12 @@ import os
 from itsdangerous import URLSafeTimedSerializer
 from app.extensions import mail
 from flask_mail import Message
-
+from app import configuration
+from sib_api_v3_sdk import (
+    ApiClient,
+    TransactionalEmailsApi,
+    SendSmtpEmail
+)
 
 def refresh_home_cache():
     latest_posts = (
@@ -29,29 +34,35 @@ def UserPostCaching(current_user):
         cache.set(cache_key,user_posts,timeout=300)
     return user_posts
 def sendEmail(userEmail, tokenLink):
-    try:
-        msg = Message(
-            subject="Verify your email - H-24 Blog",
-            sender=os.getenv('MAIL_USERNAME'),
-            recipients=[userEmail]
-        )
+    api_instance = TransactionalEmailsApi(ApiClient(configuration))
+
+    send_smtp_email = SendSmtpEmail(
+        sender={
+            "name": "H-24 Blog",
+            "email": "dhhardik242008@gmail.com"
+        },
+        to=[
+            {
+                "email": f"{userEmail}",
+                "name": "H-24 Blog App User "
+            }
+        ],
+        subject="Verify Your Profile ",
+        html_content=f"""
         
-        msg.html = f"""
-            <h2>Welcome to H-24 Blog</h2>
-            <p>Click the button below to verify your email.</p>
-            <a href="{tokenLink}" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
-                Verify Email
-            </a>
+        <h2>Hello👋  From H-24 community </h2>
+        <p>User Please verify your Email for H-24 Blog App</p>
+        <a href='{tokenLink}'> Verify! </a>
         """
-        
-        mail.send(msg)
-        print("Email sent successfully via Gmail SMTP")
+    )
+
+    try:
+        response = api_instance.send_transac_email(send_smtp_email)
+        print("Email Sent Successfully!")
         return True
-
     except Exception as e:
-        print(f"Email Error: {e}")
+        print("Error:", e)
         return False
-
 
 SECRET_KEY =  os.getenv('SECRET_KEY')
 SECURITY_SALT = os.getenv("SECURITY_SALT")

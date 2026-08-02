@@ -51,3 +51,4 @@ urllib3==2.7.0
 Werkzeug==3.1.8
 wrapt==2.3.0
 WTForms==3.2.2
+sib-api-v3-sdk==7.6.0

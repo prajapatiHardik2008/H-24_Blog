@@ -58,9 +58,9 @@ SECURITY_SALT = os.getenv("SECURITY_SALT")
 
 def genrate_verifactionToken(email):
     serializer = URLSafeTimedSerializer(secret_key=SECRET_KEY)
-    return serializer
+    return serializer.dumps(email, salt=SECURITY_SALT)
 
-def verifyToken(token,expiration=900):
+def verifyToken(token,expiration=1500):
     serializer = URLSafeTimedSerializer(secret_key=SECRET_KEY)
     try:
         email = serializer.loads(

@@ -7,6 +7,7 @@ from flask_login import LoginManager
 import cloudinary
 from flask_caching import Cache
 from flask_mail import Mail
+from flask_login import AnonymousUserMixin
 
 #from sqlalchemy.orm import DeclarativeBase
 dotenv.load_dotenv()
@@ -61,6 +62,15 @@ app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 
 mail = Mail(app)
+
+# Custom anonymous class jisme is_verified ko False set kar diya
+class AnonymousUser(AnonymousUserMixin):
+    @property
+    def is_verified(self):
+        return False
+
+# Flask-Login me isko set kar do
+login_manager.anonymous_user = AnonymousUser
 #------------------------------------
 from app import models
 from app import routes

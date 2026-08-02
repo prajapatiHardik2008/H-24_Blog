@@ -291,6 +291,9 @@ def inject_profile():
 @app.route('/post/new',methods = ["POST","GET"])
 @login_required
 def new_post():
+    if current_user.is_verified == False:
+        flash("Verify Your Email First !",'danger')
+        return redirect(url_for('home'))
     form = createPost()
 
     if form.validate_on_submit():
@@ -306,18 +309,41 @@ def new_post():
         return redirect(url_for("home"))
 
     return render_template('new_post.html',title="POST",form=form)
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+from flask import current_app, render_template, redirect, url_for, flash
 
-@app.route('/verify/<token>')
+@app.route("/verify/<token>")
 def verify_email(token):
-    # Token ko verify karo aur email extract karo (15 minutes expiry)
-    email = verifyToken(token, expiration=900)
-    
+    # Tumhare function ko call karke email nikal rahe hain
+    email = verifyToken(token)
+
     if not email:
-        return "The confirmation link is invalid or has expired.", 400
-    
-    if current_user.is_verified:
-         return "Account already verified!"
-    current_user.is_verified = True
-    db.session.commit()
-    
-    return f"Email {email} verified successfully! You can now log in."
+        flash("The verification link is invalid or has expired.", "danger")
+        return redirect(url_for('login'))
+
+    # Ab database se user dhoondo
+    user = User.query.filter_by(email=email).first()
+
+    if user:
+        if user.is_verified:
+            flash("Account already verified! Please log in.", "info")
+        else:
+            user.is_verified = True
+            db.session.commit()
+            flash("Your email has been verified! You can now log in.", "success")
+    else:
+        flash("User not found.", "danger")
+
+    return redirect(url_for('login'))
+
+@app.route('/sendverifaction')
+def sendverif():
+    token = genrate_verifactionToken(current_user.email)
+    token_link = url_for('verify_email', token=token, _external=True)
+
+    email_sent = sendEmail(current_user.email, tokenLink=token_link)
+    if email_sent:
+            flash("Registration successful! Please check your email to verify.", "success")
+    else:
+            flash("Account created, but failed to send verification email.", "warning")
+    return redirect(url_for('home'))

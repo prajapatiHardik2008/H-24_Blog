@@ -347,3 +347,9 @@ def sendverif():
     else:
             flash("Email failed to send.", "warning")
     return redirect(url_for('home'))
+
+@app.after_request
+def add_security_headers(response):
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
+    return response

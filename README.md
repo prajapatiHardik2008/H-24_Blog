@@ -183,14 +183,13 @@ Prioritized improvements and feature ideas you can track/implement:
 
 ---
 
-## License
-Choose and add your license here (e.g., MIT). If you want, I can add a LICENSE file.
 
 ---
 
 ## Maintainer
 Hardik Prajapati — repository owner / maintainer  
-Contact: (add email or profile link)
+Contact: hardikprajapati2008@gmail.com
+
 
 ---
 
